@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настройки аккаунта - ArtShop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #fdf6f0 0%, #f0e6dc 100%);
+            color: #4a3f35;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Декоративные круги */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 109, 83, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -150px;
+            left: -150px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(78, 140, 83, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Контейнер */
+        .container {
+            max-width: 520px;
+            width: 100%;
+            padding: 45px 45px 40px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.08),
+                0 8px 20px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            position: relative;
+            z-index: 10;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Заголовок */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+
+        .header .icon {
+            font-size: 40px;
+        }
+
+        .header h2 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #3d3126;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: #8c7a6b;
+            font-size: 15px;
+            font-weight: 400;
+            margin-bottom: 20px;
+        }
+
+        .divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #8c6d53, #b8957a);
+            border-radius: 2px;
+            margin: 0 0 25px 0;
+        }
+
+        /* Ссылка назад */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #8c6d53;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            padding: 6px 12px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            margin-bottom: 16px;
+        }
+
+        .back-link:hover {
+            background: rgba(140, 109, 83, 0.06);
+            color: #6d5340;
+            transform: translateX(-4px);
+        }
+
+        .back-link::before {
+            content: '←';
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .back-link:hover::before {
+            transform: translateX(-4px);
+        }
+
+        /* Разделитель hr */
+        .hr-divider {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(140, 109, 83, 0.12), transparent);
+            margin: 20px 0 24px;
+        }
+
+        /* Форма */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #4a3f35;
+            letter-spacing: 0.2px;
+        }
+
+        .form-group label .required {
+            color: #c0392b;
+            margin-left: 2px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 13px 16px;
+            border: 2px solid #e8ded6;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 15px;
+            color: #4a3f35;
+            background: white;
+            transition: all 0.3s ease;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            border-color: #8c6d53;
+            box-shadow: 0 0 0 4px rgba(140, 109, 83, 0.08);
+            background: white;
+        }
+
+        .form-group input::placeholder {
+            color: #b5a89b;
+            font-weight: 300;
+        }
+
+        .form-group .help-text {
+            display: block;
+            margin-top: 6px;
+            font-size: 13px;
+            color: #b5a89b;
+            font-weight: 400;
+        }
+
+        /* Кнопка */
+        .btn-save {
+            background: linear-gradient(135deg, #4e8c53, #3d7a42);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(78, 140, 83, 0.25);
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-save::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+            border-radius: 50px;
+            pointer-events: none;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(78, 140, 83, 0.35);
+            background: linear-gradient(135deg, #3d7a42, #2d6a32);
+        }
+
+        .btn-save:active {
+            transform: translateY(0px);
+            box-shadow: 0 2px 15px rgba(78, 140, 83, 0.2);
+        }
+
+        /* Toast-уведомление */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 16px 28px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 15px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10000;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 400px;
+        }
+
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        #toast.success {
+            background: linear-gradient(135deg, #4e8c53, #3d7a42);
+            color: white;
+        }
+
+        #toast.error {
+            background: linear-gradient(135deg, #c45a4a, #a93226);
+            color: white;
+        }
+
+        /* Информационная карточка */
+        .info-card {
+            background: linear-gradient(135deg, #f8f2ec, #f0e8e0);
+            border-radius: 14px;
+            padding: 14px 18px;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid rgba(140, 109, 83, 0.06);
+        }
+
+        .info-card .info-icon {
+            font-size: 24px;
+        }
+
+        .info-card .info-text {
+            font-size: 14px;
+            color: #6b5b4b;
+            line-height: 1.5;
+        }
+
+        .info-card .info-text strong {
+            color: #4a3f35;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 24px 32px;
+                border-radius: 24px;
+            }
+
+            .header .icon {
+                font-size: 32px;
+            }
+
+            .header h2 {
+                font-size: 22px;
+            }
+
+            .subtitle {
+                font-size: 13px;
+            }
+
+            .form-group input {
+                padding: 11px 14px;
+                font-size: 14px;
+            }
+
+            .btn-save {
+                font-size: 15px;
+                padding: 14px 24px;
+            }
+
+            #toast {
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+                padding: 14px 20px;
+                font-size: 14px;
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 20px 16px 24px;
+                border-radius: 18px;
+            }
+
+            .header .icon {
+                font-size: 28px;
+            }
+
+            .header h2 {
+                font-size: 18px;
+            }
+
+            .form-group input {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            .btn-save {
+                font-size: 14px;
+                padding: 12px 20px;
+            }
+
+            .info-card {
+                padding: 10px 14px;
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Заголовок -->
+        <div class="header">
+            <span class="icon">🔐</span>
+            <h2>Настройки аккаунта</h2>
+        </div>
+        <p class="subtitle">Обновите данные своего профиля</p>
+        <div class="divider"></div>
+
+        <!-- Ссылка назад -->
+        <a href="{% url 'catalog:profile' %}" class="back-link">Вернуться в профиль</a>
+
+        <!-- Информационная карточка -->
+        <div class="info-card">
+            <span class="info-icon">🔒</span>
+            <span class="info-text">
+                <strong>Безопасность данных:</strong> Ваш email используется для входа и получения уведомлений о заказах.
+            </span>
+        </div>
+
+        <hr class="hr-divider">
+
+        <!-- Форма -->
+        <form id="email-form">
+            <div class="form-group">
+                <label for="email-input">
+                    Электронная почта <span class="required">*</span>
+                </label>
+                <input 
+                    type="email" 
+                    id="email-input" 
+                    required 
+                    placeholder="example@mail.com">
+                <span class="help-text">📧 На этот адрес будут приходить уведомления о заказах</span>
+            </div>
+
+            <button type="submit" class="btn-save">
+                💾 Обновить Email
+            </button>
+        </form>
+    </div>
+
+    <!-- Toast-уведомление -->
+    <div id="toast"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const toast = document.getElementById('toast');
+            
+            function showToast(message, isSuccess = true) {
+                toast.textContent = message;
+                toast.className = isSuccess ? 'success show' : 'error show';
+                clearTimeout(toast._timeout);
+                toast._timeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            // Загрузка текущего email
+            try {
+                const res = await fetch('/api/me/');
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('email-input').value = data.email || '';
+                } else {
+                    showToast('Не удалось загрузить данные профиля', false);
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Ошибка соединения с сервером', false);
+            }
+
+            // Обновление email
+            document.getElementById('email-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const email = document.getElementById('email-input').value.trim();
+                if (!email) {
+                    showToast('Пожалуйста, введите email', false);
+                    return;
+                }
+
+                const csrftoken = getCookie('csrftoken');
+                if (!csrftoken) {
+                    showToast('Ошибка безопасности: CSRF-токен не найден', false);
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/me/', {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken
+                        },
+                        body: JSON.stringify({ email: email })
+                    });
+
+                    if (response.ok) {
+                        showToast('✅ Email успешно обновлен!', true);
+                    } else {
+                        const errorData = await response.json();
+                        showToast('❌ ' + (errorData.detail || 'Ошибка при обновлении email'), false);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showToast('❌ Ошибка соединения с сервером', false);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

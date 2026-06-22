@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест - ArtShop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #fdf6f0 0%, #f0e6dc 100%);
+            color: #4a3f35;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Декоративные круги */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 109, 83, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -150px;
+            left: -150px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(78, 140, 83, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Контейнер */
+        .container {
+            max-width: 520px;
+            width: 100%;
+            padding: 50px 45px 45px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.08),
+                0 8px 20px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 30px 80px rgba(0, 0, 0, 0.1),
+                0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Анимированная иконка */
+        .icon-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .icon-wrapper .icon {
+            font-size: 72px;
+            display: block;
+            animation: bounce 2s ease-in-out infinite;
+            filter: drop-shadow(0 8px 20px rgba(78, 140, 83, 0.2));
+        }
+
+        @keyframes bounce {
+            0%, 100% { 
+                transform: translateY(0) scale(1); 
+            }
+            50% { 
+                transform: translateY(-10px) scale(1.05); 
+            }
+        }
+
+        /* Конфетти */
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .confetti:nth-child(2) {
+            top: -10px;
+            right: -20px;
+            background: #f5a623;
+            animation-delay: 0s;
+        }
+
+        .confetti:nth-child(3) {
+            bottom: 10px;
+            left: -25px;
+            background: #4e8c53;
+            animation-delay: 0.5s;
+            width: 6px;
+            height: 6px;
+        }
+
+        .confetti:nth-child(4) {
+            top: 20px;
+            left: -15px;
+            background: #e87461;
+            animation-delay: 1s;
+            width: 10px;
+            height: 10px;
+        }
+
+        .confetti:nth-child(5) {
+            bottom: -5px;
+            right: -15px;
+            background: #6d9fd8;
+            animation-delay: 0.3s;
+            width: 7px;
+            height: 7px;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0) rotate(0deg); 
+                opacity: 0.6; 
+            }
+            50% { 
+                transform: translateY(-8px) rotate(180deg); 
+                opacity: 1; 
+            }
+        }
+
+        /* Заголовок */
+        h1 {
+            color: #3d7a42;
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: #8c7a6b;
+            font-size: 16px;
+            font-weight: 400;
+            margin-bottom: 20px;
+            letter-spacing: 0.3px;
+        }
+
+        .divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #8c6d53, #b8957a);
+            border-radius: 2px;
+            margin: 16px auto 20px;
+        }
+
+        /* Информационная карточка */
+        .info-card {
+            background: linear-gradient(135deg, #f8f2ec, #f0e8e0);
+            border-radius: 14px;
+            padding: 18px 22px;
+            margin: 20px 0 25px;
+            border: 1px solid rgba(140, 109, 83, 0.06);
+        }
+
+        .info-card .info-icon {
+            font-size: 28px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .info-card .info-text {
+            font-size: 15px;
+            color: #6b5b4b;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .info-card .info-text strong {
+            color: #3d7a42;
+        }
+
+        /* Статусный индикатор */
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            border-radius: 50px;
+            background: rgba(78, 140, 83, 0.1);
+            color: #3d7a42;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .status-indicator .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4e8c53;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        /* Кнопки */
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #4e8c53, #3d7a42);
+            color: white;
+            padding: 14px 32px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(78, 140, 83, 0.25);
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(78, 140, 83, 0.35);
+            background: linear-gradient(135deg, #3d7a42, #2d6a32);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #6d5340;
+            padding: 14px 32px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            border: 2px solid #e8ded6;
+            cursor: pointer;
+            font-family: inherit;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-secondary:hover {
+            border-color: #8c6d53;
+            background: #faf6f2;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0px);
+        }
+
+        /* Детали */
+        .details {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.04);
+            font-size: 13px;
+            color: #b5a89b;
+        }
+
+        .details code {
+            background: rgba(140, 109, 83, 0.06);
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #8c6d53;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 480px) {
+            .container {
+                padding: 35px 24px 30px;
+                border-radius: 24px;
+            }
+
+            .icon-wrapper .icon {
+                font-size: 56px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                padding: 14px 20px;
+                font-size: 15px;
+            }
+
+            .info-card {
+                padding: 14px 16px;
+            }
+
+            .info-card .info-text {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 25px 16px 24px;
+                border-radius: 18px;
+            }
+
+            .icon-wrapper .icon {
+                font-size: 44px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .status-indicator {
+                font-size: 12px;
+                padding: 6px 16px;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                font-size: 14px;
+                padding: 12px 16px;
+            }
+
+            .details {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Анимированная иконка -->
+        <div class="icon-wrapper">
+            <span class="icon">✅</span>
+            <span class="confetti"></span>
+            <span class="confetti"></span>
+            <span class="confetti"></span>
+            <span class="confetti"></span>
+        </div>
+
+        <!-- Заголовок -->
+        <h1>Django работает!</h1>
+        <p class="subtitle">Шаблоны успешно найдены</p>
+
+        <div class="divider"></div>
+
+        <!-- Статус -->
+        <div class="status-indicator">
+            <span class="dot"></span>
+            Система работает стабильно
+        </div>
+
+        <!-- Информационная карточка -->
+        <div class="info-card">
+            <span class="info-icon">🎯</span>
+            <p class="info-text">
+                <strong>✅ Успех!</strong> Если вы видите это сообщение, 
+                значит проблема с файлом <strong>order_success.html</strong> 
+                успешно решена.
+            </p>
+        </div>
+
+        <!-- Действия -->
+        <div class="actions">
+            <a href="{% url 'catalog:index' %}" class="btn-primary">
+                🏠 На главную
+            </a>
+            <a href="{% url 'catalog:product_list' %}" class="btn-secondary">
+                📦 В каталог
+            </a>
+        </div>
+
+        <!-- Детали -->
+        <div class="details">
+            <span>💡 Тестовая страница · </span>
+            <code>order_success.html</code>
+        </div>
+    </div>
+
+</body>
+</html>

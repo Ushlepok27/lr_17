@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет - ArtShop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #fdf6f0 0%, #f0e6dc 100%);
+            color: #4a3f35;
+            min-height: 100vh;
+            padding: 0;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Декоративные круги */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 109, 83, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -150px;
+            left: -150px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(78, 140, 83, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Падающие котики */
+        #cat-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .floating-cat {
+            position: absolute;
+            font-size: 24px;
+            user-select: none;
+            animation: fall linear infinite;
+            opacity: 0.4;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.05));
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-50px) rotate(0deg) scale(0.8);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(105vh) rotate(360deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Навигация */
+        nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        nav .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        nav .logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: #3d7a42;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        nav .logo span {
+            font-size: 28px;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #6b5b4b;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            padding: 6px 14px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #8c6d53, #b8957a);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        nav a:hover {
+            color: #4a3f35;
+            background: rgba(140, 109, 83, 0.06);
+        }
+
+        nav a:hover::after {
+            width: 60%;
+        }
+
+        nav .logout-link {
+            color: #c45a4a;
+        }
+
+        nav .logout-link:hover {
+            background: rgba(196, 90, 74, 0.08);
+            color: #a93226;
+        }
+
+        /* Контейнер */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Заголовок страницы */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3d3126;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-header h1 .icon {
+            font-size: 32px;
+        }
+
+        .page-header .user-badge {
+            font-size: 14px;
+            color: #8c7a6b;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .page-header .user-badge .role {
+            color: #8c6d53;
+            font-weight: 600;
+        }
+
+        .divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #8c6d53, #b8957a);
+            border-radius: 2px;
+            margin-bottom: 25px;
+        }
+
+        /* Быстрые действия */
+        .quick-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .quick-actions .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 22px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            border: none;
+            cursor: pointer;
+        }
+
+        .quick-actions .btn-action.primary {
+            background: linear-gradient(135deg, #8c6d53, #7a5d46);
+            color: white;
+            box-shadow: 0 2px 12px rgba(140, 109, 83, 0.2);
+        }
+
+        .quick-actions .btn-action.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(140, 109, 83, 0.3);
+        }
+
+        .quick-actions .btn-action.secondary {
+            background: white;
+            color: #6d5340;
+            border: 2px solid #e8ded6;
+        }
+
+        .quick-actions .btn-action.secondary:hover {
+            border-color: #8c6d53;
+            background: #faf6f2;
+            transform: translateY(-2px);
+        }
+
+        .quick-actions .btn-action.green {
+            background: linear-gradient(135deg, #4e8c53, #3d7a42);
+            color: white;
+            box-shadow: 0 2px 12px rgba(78, 140, 83, 0.2);
+        }
+
+        .quick-actions .btn-action.green:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(78, 140, 83, 0.3);
+        }
+
+        .quick-actions .btn-action.settings {
+            background: rgba(140, 109, 83, 0.08);
+            color: #8c6d53;
+        }
+
+        .quick-actions .btn-action.settings:hover {
+            background: rgba(140, 109, 83, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Гибкий контейнер */
+        .flex-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .block-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+            padding: 28px 30px 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            flex: 1 1 450px;
+            transition: transform 0.3s ease;
+        }
+
+        .block-section:hover {
+            transform: translateY(-2px);
+        }
+
+        .block-section h2 {
+            margin-top: 0;
+            color: #3d3126;
+            font-size: 1.3rem;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(140, 109, 83, 0.08);
+            padding-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .block-section .section-subtitle {
+            font-size: 14px;
+            color: #b5a89b;
+            margin-bottom: 18px;
+        }
+
+        /* Форма */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #4a3f35;
+            letter-spacing: 0.2px;
+        }
+
+        .form-group label .required {
+            color: #c0392b;
+            margin-left: 2px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 11px 14px;
+            border: 2px solid #e8ded6;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            color: #4a3f35;
+            background: white;
+            transition: all 0.3s ease;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #8c6d53;
+            box-shadow: 0 0 0 4px rgba(140, 109, 83, 0.08);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #b5a89b;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #4e8c53, #3d7a42);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 15px rgba(78, 140, 83, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 25px rgba(78, 140, 83, 0.3);
+            background: linear-gradient(135deg, #3d7a42, #2d6a32);
+        }
+
+        /* Таблица заказов */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 14px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #f8f2ec, #f0e8e0);
+            color: #4a3f35;
+            font-weight: 600;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+            color: #4a3f35;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(248, 242, 236, 0.3);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .status-badge.processing {
+            background: rgba(245, 166, 35, 0.12);
+            color: #d4880f;
+        }
+
+        .status-badge.shipped {
+            background: rgba(78, 140, 83, 0.12);
+            color: #3d7a42;
+        }
+
+        .status-badge.delivered {
+            background: rgba(78, 140, 83, 0.12);
+            color: #3d7a42;
+        }
+
+        .status-badge.cancelled {
+            background: rgba(196, 90, 74, 0.12);
+            color: #c45a4a;
+        }
+
+        .btn-order-detail {
+            background: rgba(140, 109, 83, 0.08);
+            color: #8c6d53;
+            text-decoration: none;
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-order-detail:hover {
+            background: rgba(140, 109, 83, 0.15);
+            transform: translateX(2px);
+        }
+
+        .no-orders {
+            text-align: center;
+            padding: 30px 20px;
+            color: #b5a89b;
+        }
+
+        .no-orders .icon {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+
+        .no-orders p {
+            margin: 0;
+            font-size: 16px;
+            color: #8c7a6b;
+        }
+
+        /* Неавторизованный пользователь */
+        .unauthorized {
+            text-align: center;
+            padding: 50px 30px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.06);
+            max-width: 500px;
+            margin: 40px auto;
+        }
+
+        .unauthorized .icon {
+            font-size: 64px;
+            display: block;
+            margin-bottom: 16px;
+        }
+
+        .unauthorized h3 {
+            color: #c45a4a;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .unauthorized p {
+            color: #7a6a58;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        .unauthorized .btn-login {
+            background: linear-gradient(135deg, #8c6d53, #7a5d46);
+            color: white;
+            padding: 14px 40px;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 50px;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(140, 109, 83, 0.25);
+        }
+
+        .unauthorized .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(140, 109, 83, 0.35);
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            color: white;
+            padding: 16px 28px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 15px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10000;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        #toast.success {
+            background: linear-gradient(135deg, #4e8c53, #3d7a42);
+        }
+
+        #toast.error {
+            background: linear-gradient(135deg, #c45a4a, #a93226);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            nav .nav-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            nav ul {
+                justify-content: center;
+                gap: 10px;
+            }
+
+            nav a {
+                font-size: 13px;
+                padding: 5px 12px;
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .flex-container {
+                flex-direction: column;
+            }
+
+            .block-section {
+                padding: 20px;
+                border-radius: 18px;
+            }
+
+            .quick-actions {
+                flex-direction: column;
+            }
+
+            .quick-actions .btn-action {
+                justify-content: center;
+            }
+
+            #toast {
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+                padding: 14px 20px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px 12px 40px;
+            }
+
+            .page-header h1 {
+                font-size: 1.3rem;
+            }
+
+            .page-header h1 .icon {
+                font-size: 24px;
+            }
+
+            .page-header .user-badge {
+                font-size: 12px;
+                padding: 4px 14px;
+            }
+
+            .block-section {
+                padding: 16px;
+                border-radius: 14px;
+            }
+
+            .block-section h2 {
+                font-size: 1.1rem;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                padding: 9px 12px;
+                font-size: 13px;
+            }
+
+            .btn-save {
+                font-size: 14px;
+                padding: 10px 20px;
+                width: 100%;
+                justify-content: center;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px 10px;
+            }
+
+            .status-badge {
+                font-size: 10px;
+                padding: 3px 10px;
+            }
+
+            .btn-order-detail {
+                font-size: 11px;
+                padding: 4px 10px;
+            }
+
+            .unauthorized {
+                padding: 30px 20px;
+                margin: 20px auto;
+            }
+
+            .unauthorized .icon {
+                font-size: 48px;
+            }
+
+            .unauthorized h3 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Падающие котики -->
+    <div id="cat-container"></div>
+
+    <!-- Toast -->
+    <div id="toast"></div>
+
+    <!-- Навигация -->
+    <nav>
+        <div class="nav-container">
+            <a href="{% url 'catalog:index' %}" class="logo">
+                <span>🎨</span> ArtShop
+            </a>
+            <ul>
+                <li><a href="{% url 'catalog:index' %}">🏠 Главная</a></li>
+                <li><a href="{% url 'catalog:product_list' %}">📦 Каталог</a></li>
+                <li><a href="{% url 'catalog:cart_view' %}">🛒 Корзина</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'catalog:logout' %}" class="logout-link">🚪 Выйти</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Контейнер -->
+    <div class="container">
+        {% if not user.is_authenticated %}
+            <div class="unauthorized">
+                <span class="icon">🔒</span>
+                <h3>Вы не авторизованы</h3>
+                <p>Для просмотра личного кабинета необходимо войти в свой аккаунт.</p>
+                <a href="{% url 'catalog:login' %}" class="btn-login">🔑 Войти в аккаунт</a>
+            </div>
+        {% else %}
+            <!-- Заголовок -->
+            <div class="page-header">
+                <h1>
+                    <span class="icon">👤</span> Личный кабинет
+                </h1>
+                <span class="user-badge">
+                    👋 {{ user.username }}
+                    <span class="role" id="user-role-badge">Загрузка...</span>
+                </span>
+            </div>
+            <div class="divider"></div>
+
+            <!-- Быстрые действия -->
+            <div class="quick-actions">
+                <a href="{% url 'catalog:settings' %}" class="btn-action settings">⚙ Настройки аккаунта</a>
+                <a href="{% url 'catalog:cart_view' %}" class="btn-action primary">🛒 Корзина</a>
+                <a href="{% url 'catalog:checkout' %}" class="btn-action green">📦 Оформить заказ</a>
+            </div>
+
+            <!-- Основной контент -->
+            <div class="flex-container">
+                <!-- Профиль -->
+                <section class="block-section">
+                    <h2>📋 Мой профиль</h2>
+                    <p class="section-subtitle">Заполните или обновите свои данные</p>
+                    <form id="profile-form">
+                        <div class="form-group">
+                            <label>ФИО <span class="required">*</span></label>
+                            <input type="text" id="full_name" name="full_name" placeholder="Иванов Иван Иванович">
+                        </div>
+                        <div class="form-group">
+                            <label>Телефон <span class="required">*</span></label>
+                            <input type="text" id="phone" name="phone" placeholder="+375 (XX) XXX-XX-XX">
+                        </div>
+                        <div class="form-group">
+                            <label>Адрес доставки</label>
+                            <textarea id="address" name="address" rows="3" placeholder="Улица, дом, квартира"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Микрорайон (г. Минск)</label>
+                            <input type="text" id="district" name="district" placeholder="Например, Малиновка, Уручье">
+                        </div>
+                        <div class="form-group">
+                            <label>Почтовый индекс</label>
+                            <input type="text" id="postal_code" name="postal_code" placeholder="220000">
+                        </div>
+                        <button type="submit" class="btn-save">💾 Сохранить изменения</button>
+                    </form>
+                </section>
+
+                <!-- Заказы -->
+                <section class="block-section">
+                    <h2>📦 Мои заказы</h2>
+                    <p class="section-subtitle">История ваших заказов</p>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>№ Заказа</th>
+                                    <th>Дата</th>
+                                    <th>Статус</th>
+                                    <th>Действие</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-tbody">
+                            </tbody>
+                        </table>
+                        <div id="no-orders" class="no-orders" style="display: none;">
+                            <span class="icon">🛍️</span>
+                            <p>У вас пока нет заказов</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if user.is_authenticated %}
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const toast = document.getElementById('toast');
+            
+            function showToast(msg, isSuccess = true) {
+                toast.innerText = msg;
+                toast.className = isSuccess ? 'success show' : 'error show';
+                clearTimeout(toast._timeout);
+                toast._timeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            // Загрузка данных профиля
+            try {
+                const res = await fetch('/api/me/');
+                if (res.ok) {
+                    const data = await res.json();
+                    const roleNames = { 'CUSTOMER': 'Клиент', 'MANAGER': 'Менеджер', 'ADMIN': 'Администратор' };
+                    document.getElementById('user-role-badge').innerText = roleNames[data.role] || data.role;
+                    document.getElementById('full_name').value = data.full_name || '';
+                    document.getElementById('phone').value = data.phone || '';
+                    document.getElementById('address').value = data.address || '';
+                    document.getElementById('district').value = data.district || '';
+                    document.getElementById('postal_code').value = data.postal_code || '';
+                }
+            } catch (err) { console.error(err); }
+
+            // Сохранение профиля
+            document.getElementById('profile-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const payload = {
+                    full_name: document.getElementById('full_name').value,
+                    phone: document.getElementById('phone').value,
+                    address: document.getElementById('address').value,
+                    district: document.getElementById('district').value,
+                    postal_code: document.getElementById('postal_code').value,
+                };
+
+                try {
+                    const res = await fetch('/api/me/', {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    if (res.ok) {
+                        showToast('✅ Профиль успешно сохранен!', true);
+                    } else {
+                        showToast('❌ Ошибка при сохранении данных', false);
+                    }
+                } catch (err) {
+                    showToast('❌ Сбой сети', false);
+                }
+            });
+
+            // Загрузка заказов
+            const tbody = document.getElementById('orders-tbody');
+            const noOrders = document.getElementById('no-orders');
+
+            try {
+                const res = await fetch('/api/orders/');
+                if (res.ok) {
+                    const orders = await res.json();
+                    if (orders.length === 0) {
+                        noOrders.style.display = 'block';
+                        tbody.parentElement.style.display = 'none';
+                    } else {
+                        tbody.parentElement.style.display = 'table';
+                        noOrders.style.display = 'none';
+                        orders.forEach(order => {
+                            const tr = document.createElement('tr');
+                            const date = new Date(order.created_at || Date.now()).toLocaleDateString('ru-RU', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric'
+                            });
+                            
+                            const statusMap = {
+                                'processing': 'В обработке',
+                                'shipped': 'Отправлен',
+                                'delivered': 'Доставлен',
+                                'cancelled': 'Отменён'
+                            };
+                            const statusClass = order.status || 'processing';
+                            const statusLabel = statusMap[statusClass] || 'В обработке';
+                            
+                            tr.innerHTML = `
+                                <td><strong>#${order.id}</strong></td>
+                                <td>${date}</td>
+                                <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+                                <td><a href="/catalog/order/${order.id}/" class="btn-order-detail">Подробнее →</a></td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+            }
+
+            // Летающие котики
+            const catContainer = document.getElementById('cat-container');
+            const catEmojis = ['🐱', '🐈', '🐾', '😸', '😻', '🐈‍⬛', '🐈‍⬛', '🐈'];
+
+            function createCat() {
+                const cat = document.createElement('div');
+                cat.classList.add('floating-cat');
+                cat.innerText = catEmojis[Math.floor(Math.random() * catEmojis.length)];
+                cat.style.left = Math.random() * 100 + 'vw';
+                const duration = Math.random() * 4 + 6;
+                cat.style.animationDuration = duration + 's';
+                cat.style.fontSize = Math.random() * 14 + 18 + 'px';
+                cat.style.animationDelay = Math.random() * 2 + 's';
+                catContainer.appendChild(cat);
+                setTimeout(() => { cat.remove(); }, duration * 1000);
+            }
+
+            setTimeout(() => {
+                setInterval(createCat, 800);
+            }, 500);
+
+            for (let i = 0; i < 3; i++) {
+                setTimeout(createCat, i * 300);
+            }
+        });
+    </script>
+    {% endif %}
+</body>
+</html>

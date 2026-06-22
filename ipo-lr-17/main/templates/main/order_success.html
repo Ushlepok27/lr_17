@@ -1,0 +1,392 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-card">
+        <!-- Анимированная иконка -->
+        <div class="icon-wrapper">
+            <span class="success-icon">🎉</span>
+            <span class="confetti"></span>
+            <span class="confetti"></span>
+            <span class="confetti"></span>
+            <span class="confetti"></span>
+        </div>
+
+        <h1>Заказ оформлен!</h1>
+        <p class="subtitle">Спасибо за доверие! 🐱</p>
+
+        <div class="divider"></div>
+
+        <div class="order-info">
+            <div class="order-number">
+                <span class="label">Номер заказа</span>
+                <span class="number">#{{ order.id }}</span>
+            </div>
+            <div class="order-total">
+                <span class="label">Сумма</span>
+                <span class="amount">{{ order.total }} ₽</span>
+            </div>
+        </div>
+
+        <div class="order-details">
+            <p class="detail-text">
+                📧 Чек отправлен на вашу почту<br>
+                <span class="detail-hint">Мы свяжемся с вами в ближайшее время</span>
+            </p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="actions">
+            <a href="/catalog/" class="btn-primary">
+                🛍️ Продолжить покупки
+            </a>
+            <a href="{% url 'catalog:index' %}" class="btn-secondary">
+                🏠 На главную
+            </a>
+        </div>
+
+        <p class="footer-note">Мы всегда рады вам ❤️</p>
+    </div>
+</div>
+
+<style>
+    /* Стили для страницы успешного заказа */
+    .success-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 70vh;
+    }
+
+    .success-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 50px 45px 45px;
+        border-radius: 32px;
+        text-align: center;
+        box-shadow: 
+            0 20px 60px rgba(0, 0, 0, 0.08),
+            0 8px 20px rgba(0, 0, 0, 0.04),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        width: 100%;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .success-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(78, 140, 83, 0.03) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .success-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 
+            0 30px 80px rgba(0, 0, 0, 0.1),
+            0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Анимированная иконка */
+    .icon-wrapper {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 16px;
+    }
+
+    .success-icon {
+        font-size: 72px;
+        display: block;
+        animation: bounce 2s ease-in-out infinite;
+        filter: drop-shadow(0 8px 20px rgba(78, 140, 83, 0.2));
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(-10px) scale(1.05); }
+    }
+
+    /* Конфетти */
+    .confetti {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .confetti:nth-child(2) {
+        top: -10px;
+        right: -20px;
+        background: #f5a623;
+        animation-delay: 0s;
+    }
+
+    .confetti:nth-child(3) {
+        bottom: 10px;
+        left: -25px;
+        background: #4e8c53;
+        animation-delay: 0.5s;
+        width: 6px;
+        height: 6px;
+    }
+
+    .confetti:nth-child(4) {
+        top: 20px;
+        left: -15px;
+        background: #e87461;
+        animation-delay: 1s;
+        width: 10px;
+        height: 10px;
+    }
+
+    .confetti:nth-child(5) {
+        bottom: -5px;
+        right: -15px;
+        background: #6d9fd8;
+        animation-delay: 0.3s;
+        width: 7px;
+        height: 7px;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+        50% { transform: translateY(-8px) rotate(180deg); opacity: 1; }
+    }
+
+    /* Заголовок */
+    h1 {
+        color: #3d7a42;
+        font-size: 34px;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+        letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+        color: #8c7a6b;
+        font-size: 16px;
+        font-weight: 400;
+        margin-bottom: 20px;
+        letter-spacing: 0.3px;
+    }
+
+    /* Разделитель */
+    .divider {
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #8c6d53, #b8957a);
+        border-radius: 2px;
+        margin: 16px auto 20px;
+    }
+
+    /* Информация о заказе */
+    .order-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin: 20px 0 25px;
+    }
+
+    .order-number,
+    .order-total {
+        background: linear-gradient(135deg, #f8f2ec, #f0e8e0);
+        padding: 16px 20px;
+        border-radius: 16px;
+        border: 1px solid rgba(140, 109, 83, 0.06);
+    }
+
+    .order-number .label,
+    .order-total .label {
+        display: block;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #b5a89b;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .order-number .number {
+        font-size: 24px;
+        font-weight: 700;
+        color: #4a3f35;
+        font-family: 'Courier New', monospace;
+        letter-spacing: 0.5px;
+    }
+
+    .order-total .amount {
+        font-size: 26px;
+        font-weight: 700;
+        color: #3d7a42;
+    }
+
+    /* Детали заказа */
+    .order-details {
+        margin: 20px 0 25px;
+    }
+
+    .detail-text {
+        color: #6b5f55;
+        font-size: 16px;
+        line-height: 1.8;
+        margin: 0;
+        padding: 16px 20px;
+        background: #fdfbf9;
+        border-radius: 14px;
+        border-left: 3px solid #8c6d53;
+    }
+
+    .detail-hint {
+        display: block;
+        font-size: 14px;
+        color: #b5a89b;
+        margin-top: 4px;
+    }
+
+    /* Кнопки */
+    .actions {
+        display: flex;
+        gap: 12px;
+        margin: 10px 0 20px;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #8c6d53, #7a5d46);
+        color: white;
+        padding: 14px 32px;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(140, 109, 83, 0.25);
+        border: none;
+        cursor: pointer;
+        flex: 1;
+        justify-content: center;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(140, 109, 83, 0.35);
+        background: linear-gradient(135deg, #7a5d46, #6d5340);
+    }
+
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: white;
+        color: #6d5340;
+        padding: 14px 32px;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        border: 2px solid #e8ded6;
+        cursor: pointer;
+        flex: 1;
+        justify-content: center;
+    }
+
+    .btn-secondary:hover {
+        border-color: #8c6d53;
+        background: #faf6f2;
+        transform: translateY(-2px);
+    }
+
+    .footer-note {
+        margin-top: 20px;
+        font-size: 14px;
+        color: #b5a89b;
+        letter-spacing: 0.2px;
+    }
+
+    /* Адаптивность */
+    @media (max-width: 600px) {
+        .success-card {
+            padding: 35px 25px 30px;
+            border-radius: 24px;
+        }
+
+        .success-icon {
+            font-size: 56px;
+        }
+
+        h1 {
+            font-size: 28px;
+        }
+
+        .order-info {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .order-number .number {
+            font-size: 20px;
+        }
+
+        .order-total .amount {
+            font-size: 22px;
+        }
+
+        .actions {
+            flex-direction: column;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 15px;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .success-card {
+            padding: 25px 18px 24px;
+            border-radius: 18px;
+        }
+
+        .success-icon {
+            font-size: 44px;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+        }
+
+        .detail-text {
+            font-size: 14px;
+            padding: 14px 16px;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            font-size: 14px;
+            padding: 12px 16px;
+        }
+    }
+</style>
+{% endblock %}

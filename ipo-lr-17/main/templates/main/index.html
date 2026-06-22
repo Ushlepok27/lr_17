@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная - ArtShop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #fdf6f0 0%, #f0e6dc 100%);
+            color: #4a3f35;
+            min-height: 100vh;
+            padding: 0;
+            position: relative;
+        }
+
+        /* Декоративные круги */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 109, 83, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -150px;
+            left: -150px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(78, 140, 83, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Навигация */
+        nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        nav .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        nav .logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: #3d7a42;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        nav .logo span {
+            font-size: 28px;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #6b5b4b;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            padding: 6px 14px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #8c6d53, #b8957a);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        nav a:hover {
+            color: #4a3f35;
+            background: rgba(140, 109, 83, 0.06);
+        }
+
+        nav a:hover::after {
+            width: 60%;
+        }
+
+        nav .user-greeting {
+            font-weight: 500;
+            color: #8c6d53;
+            padding: 6px 12px;
+            background: rgba(140, 109, 83, 0.08);
+            border-radius: 50px;
+            font-size: 14px;
+        }
+
+        nav .admin-link {
+            font-weight: 600;
+            color: #8c6d53 !important;
+        }
+
+        /* Контейнер */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Hero-секция */
+        .hero {
+            text-align: center;
+            padding: 60px 40px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            margin: 20px 0 40px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.06),
+                0 8px 20px rgba(0, 0, 0, 0.03),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '🎨';
+            position: absolute;
+            top: -30px;
+            right: -20px;
+            font-size: 120px;
+            opacity: 0.06;
+            transform: rotate(15deg);
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #3d3126;
+            letter-spacing: -0.5px;
+        }
+
+        .hero h1 .highlight {
+            color: #3d7a42;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: #7a6a58;
+            margin-bottom: 28px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero .btn-catalog {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #8c6d53, #7a5d46);
+            color: white;
+            padding: 14px 36px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(140, 109, 83, 0.25);
+        }
+
+        .hero .btn-catalog:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(140, 109, 83, 0.35);
+            background: linear-gradient(135deg, #7a5d46, #6d5340);
+        }
+
+        /* Заголовки секций */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 45px 0 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #3d3126;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header h2 .icon {
+            font-size: 28px;
+        }
+
+        .section-header .view-all {
+            color: #8c6d53;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .section-header .view-all:hover {
+            background: rgba(140, 109, 83, 0.06);
+            transform: translateX(4px);
+        }
+
+        .divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #8c6d53, #b8957a);
+            border-radius: 2px;
+            margin: 0 0 25px 0;
+        }
+
+        /* Сетка товаров */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            padding: 24px 24px 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.07);
+            border-color: rgba(140, 109, 83, 0.15);
+        }
+
+        .product-card .product-image {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, #f8f2ec, #f0e8e0);
+            border-radius: 12px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            opacity: 0.6;
+        }
+
+        .product-card h3 {
+            margin: 0 0 6px 0;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #3d3126;
+        }
+
+        .product-card .product-meta {
+            font-size: 13px;
+            color: #b5a89b;
+            margin-bottom: 10px;
+        }
+
+        .product-card .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .product-card .product-price {
+            font-weight: 700;
+            color: #3d7a42;
+            font-size: 1.2rem;
+        }
+
+        .product-card .btn-detail {
+            color: #8c6d53;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            background: rgba(140, 109, 83, 0.06);
+        }
+
+        .product-card .btn-detail:hover {
+            background: rgba(140, 109, 83, 0.12);
+            transform: translateX(4px);
+        }
+
+        /* Категории */
+        .category-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 0;
+            list-style: none;
+        }
+
+        .category-item a {
+            display: block;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 10px 24px;
+            border-radius: 50px;
+            color: #6b5b4b;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .category-item a:hover {
+            background: linear-gradient(135deg, #8c6d53, #7a5d46);
+            color: #fff;
+            border-color: #8c6d53;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(140, 109, 83, 0.2);
+        }
+
+        /* Пустые состояния */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #b5a89b;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            nav .nav-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            nav ul {
+                justify-content: center;
+                gap: 10px;
+            }
+
+            nav a {
+                font-size: 13px;
+                padding: 5px 12px;
+            }
+
+            .hero {
+                padding: 40px 24px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .section-header h2 {
+                font-size: 1.4rem;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 18px;
+            }
+
+            .product-card .product-image {
+                height: 120px;
+                font-size: 36px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px 12px 40px;
+            }
+
+            .hero {
+                padding: 30px 16px;
+                border-radius: 20px;
+            }
+
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+
+            .product-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .product-card {
+                padding: 16px 14px;
+                border-radius: 14px;
+            }
+
+            .product-card h3 {
+                font-size: 1rem;
+            }
+
+            .product-card .product-price {
+                font-size: 1rem;
+            }
+
+            .product-card .btn-detail {
+                font-size: 12px;
+                padding: 4px 12px;
+            }
+
+            .product-card .product-image {
+                height: 90px;
+                font-size: 28px;
+            }
+
+            .category-item a {
+                font-size: 13px;
+                padding: 8px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Навигация -->
+    <nav>
+        <div class="nav-container">
+            <a href="{% url 'catalog:index' %}" class="logo">
+                <span>🎨</span> ArtShop
+            </a>
+            <ul>
+                <li><a href="{% url 'catalog:index' %}">🏠 Главная</a></li>
+                <li><a href="{% url 'catalog:product_list' %}">📦 Каталог</a></li>
+                <li><a href="{% url 'catalog:cart_view' %}">🛒 Корзина</a></li>
+                
+                {% if user.is_authenticated %}
+                    <li><a href="/admin/" target="_blank" class="admin-link">⚙️ Админка</a></li>
+                    <li class="user-greeting">👋 {{ user.username }}</li>
+                    <li><a href="{% url 'catalog:logout' %}">🚪 Выйти</a></li>
+                {% else %}
+                    <li><a href="{% url 'catalog:login' %}">🔑 Войти</a></li>
+                    <li><a href="{% url 'catalog:register' %}">📝 Регистрация</a></li>
+                {% endif %}
+                <li><a href="{% url 'catalog:profile' %}">👤 Профиль</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Контейнер -->
+    <div class="container">
+        <!-- Hero-секция -->
+        <section class="hero">
+            <h1>Добро пожаловать в <span class="highlight">ArtShop</span>!</h1>
+            <p>Качественные художественные товары по доступным ценам.</p>
+            <a href="{% url 'catalog:product_list' %}" class="btn-catalog">
+                Перейти в каталог →
+            </a>
+        </section>
+
+        <!-- Популярные товары -->
+        <section>
+            <div class="section-header">
+                <h2>
+                    <span class="icon">⭐</span> Популярные товары
+                </h2>
+                <a href="{% url 'catalog:product_list' %}" class="view-all">Все товары →</a>
+            </div>
+            <div class="divider"></div>
+
+            <div class="product-grid">
+                {% for product in popular_products %}
+                    <div class="product-card">
+                        <div>
+                            <div class="product-image">🖼️</div>
+                            <h3>{{ product.name }}</h3>
+                            <div class="product-meta">{{ product.category.name }}</div>
+                            <div class="product-footer">
+                                <span class="product-price">{{ product.price }} ₽</span>
+                                <a href="{% url 'catalog:product_detail' product.pk %}" class="btn-detail">Подробнее →</a>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty-state">
+                        <span class="empty-icon">🛍️</span>
+                        <p>Товары пока не добавлены</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Категории -->
+        <section style="margin-top: 50px; margin-bottom: 20px;">
+            <div class="section-header">
+                <h2>
+                    <span class="icon">📂</span> Категории товаров
+                </h2>
+            </div>
+            <div class="divider"></div>
+
+            <ul class="category-list">
+                {% for category in categories %}
+                    <li class="category-item">
+                        <a href="{% url 'catalog:product_list' %}?category={{ category.id }}">
+                            {{ category.name }}
+                        </a>
+                    </li>
+                {% empty %}
+                    <li style="color: #b5a89b;">Категории не найдены</li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+
+</body>
+</html>
